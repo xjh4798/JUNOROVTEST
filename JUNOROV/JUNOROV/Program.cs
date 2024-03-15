@@ -37,27 +37,60 @@ namespace JUNOROV
                     {
                         //压力
                         randomValue = random.Next();
-                        getBytes(randomValue, ref Press1,ref Press2,ref Press3);
-                        msg = ROV_Press;
+                        msg =getBytes(randomValue, ROV_Press);
+                        
                         stream.Write(msg, 0, msg.Length);
 
                         //当前活塞
                         randomValue = random.Next();
-                        getBytes(randomValue, ref nh1, ref nh2, ref nh1);
-                        msg = ROV_nh;
+                        msg = getBytes(randomValue, ROV_nh);
                         stream.Write(msg, 0, msg.Length);
 
 
                         //最大活塞
                         randomValue = random.Next();
-                        getBytes(randomValue, ref mh1, ref mh2, ref mh3);
-                        msg = ROV_mh;
+                        msg = getBytes(randomValue, ROV_mh);
                         stream.Write(msg, 0, msg.Length);
 
-                        Thread.Sleep(200);
+                        Thread.Sleep(1000);
                     };
                 });
 
+
+                Task.Run(() =>
+                {
+                    byte[] msg;
+                    double randomValue;
+                    while (true)
+                    {
+                        double gailu = 0.02;
+                        //液漏
+                        randomValue = random.NextDouble();
+                        if (randomValue <= gailu)
+                        {
+                            msg = AppendBack(ROV_yelou);
+                            stream.Write(msg, 0, msg.Length);
+                        }
+
+                        //上限位
+                        randomValue = random.NextDouble();
+                        if (randomValue <= gailu)
+                        {
+                            msg = AppendBack(ROV_shang);
+                            stream.Write(msg, 0, msg.Length);
+                        }
+
+                        //下限位
+                        randomValue = random.NextDouble();
+                        if (randomValue <= gailu)
+                        {
+                            msg = AppendBack(ROV_xia);
+                            stream.Write(msg, 0, msg.Length);
+                        }
+
+                        Thread.Sleep(1000);
+                    };
+                });
 
 
                 while ((i = stream.Read(result, 0, result.Length)) != 0)
@@ -257,11 +290,12 @@ namespace JUNOROV
 
         }
 
-        public static void getBytes(int num, ref byte h, ref byte m, ref byte l)
+        public static byte[] getBytes(int num, byte[] bytes)
         {
-            byte highByte = (byte)(num >> 16); // 获取最高字节
-            byte middleByte = (byte)(num >> 8 & 0xFF); // 获取中间字节
-            byte lowByte = (byte)(num & 0xFF); // 获取最低字节
+            bytes[6] = (byte)(num >> 16); // 获取最高字节
+            bytes[7] = (byte)(num >> 8 & 0xFF); // 获取中间字节
+            bytes[8] = (byte)(num & 0xFF); // 获取最低字节
+            return AppendBack(bytes); 
         }
 
         public static string ByteToHexStr(byte[] bytes)
@@ -294,6 +328,11 @@ namespace JUNOROV
             }
             return CheckCode;
         }
+
+        public static byte[] ROV_xia                   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x11, 0x00, 0x00 };//xia
+        public static byte[] ROV_shang                     = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x22, 0x00, 0x00 };//shang
+        public static byte[] ROV_yelou                   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x55, 0x00, 0x00 };//yelou
+
 
         public static byte[] ROV_Init_ok                 = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x33, 0x00, 0x00 };//初始化完成指令
         public static byte[] ROV_SelfStabilizing_ok      = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x66, 0x00, 0x00 };//深度自稳定打开
