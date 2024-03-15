@@ -1,0 +1,15 @@
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\bin\Debug\net5.0\JUNOROV.exe
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\bin\Debug\net5.0\JUNOROV.deps.json
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\bin\Debug\net5.0\JUNOROV.runtimeconfig.json
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\bin\Debug\net5.0\JUNOROV.runtimeconfig.dev.json
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\bin\Debug\net5.0\JUNOROV.dll
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\bin\Debug\net5.0\JUNOROV.pdb
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.AssemblyInfoInputs.cache
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.AssemblyInfo.cs
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.csproj.CoreCompileInputs.cache
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.dll
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\refint\JUNOROV.dll
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.pdb
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.genruntimeconfig.cache
+C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\ref\JUNOROV.dll
