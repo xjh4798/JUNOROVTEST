@@ -13,3 +13,4 @@ C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\refin
 C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.pdb
 C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.genruntimeconfig.cache
 C:\Users\xjh\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\ref\JUNOROV.dll
+C:\Users\XJH\Documents\GitHub\JUNOROVTEST\JUNOROV\JUNOROV\obj\Debug\net5.0\JUNOROV.sourcelink.json

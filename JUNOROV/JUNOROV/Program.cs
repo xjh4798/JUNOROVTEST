@@ -5,37 +5,70 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualBasic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace JUNOROV
 {
-    internal class Program
-    {
-        static void Main(string[] args)
+    internal class Program { 
+
+        public static void Main(string[] args)
         {
             Console.WriteLine("------------程序开始(Ctrl+C退出)------------");
             TcpListener server = null;
-            
 
             try
             {
-                server = new TcpListener(IPAddress.Parse("10.126.243.211"), 8080);
+                server = new TcpListener(IPAddress.Parse("127.0.0.1"), 8080);
                 server.Start();//开始监听客户端的请求
                 Byte[] result = new Byte[9];//缓存读入的数据
                 Console.WriteLine("-------------服务已启动(Ctrl+C退出)---------------");
+
                 TcpClient client = server.AcceptTcpClient();
                 NetworkStream stream = client.GetStream();//获取用于读取和写入的流对象
                 int i;
                 Random random = new Random();
                 
+                Task.Run(() =>
+                {
+                    byte[] msg;
+                    int randomValue;
+                    while (true)
+                    {
+                        //压力
+                        randomValue = random.Next();
+                        getBytes(randomValue, ref Press1,ref Press2,ref Press3);
+                        msg = ROV_Press;
+                        stream.Write(msg, 0, msg.Length);
+
+                        //当前活塞
+                        randomValue = random.Next();
+                        getBytes(randomValue, ref nh1, ref nh2, ref nh1);
+                        msg = ROV_nh;
+                        stream.Write(msg, 0, msg.Length);
+
+
+                        //最大活塞
+                        randomValue = random.Next();
+                        getBytes(randomValue, ref mh1, ref mh2, ref mh3);
+                        msg = ROV_mh;
+                        stream.Write(msg, 0, msg.Length);
+
+                        Thread.Sleep(200);
+                    };
+                });
+
+
+
                 while ((i = stream.Read(result, 0, result.Length)) != 0)
                 {
                     //接收消息打印与解析
-                    if (i!= 9)
+                    if (i != 9)
                     {
                         Console.WriteLine("-----------------消息长度错误，开启下次接收--------------");
                         continue;
                     }
-                    byte[] rec_check_first = new byte[4] { 0x00, 0x00, 0x00,0x05 };
+                    byte[] rec_check_first = new byte[4] { 0x00, 0x00, 0x00, 0x05 };
                     if (!Enumerable.SequenceEqual(result.Skip(0).Take(4), rec_check_first))
                     {
                         Console.WriteLine("-----------------消息指令头错误，开启下次接收--------------");
@@ -47,7 +80,7 @@ namespace JUNOROV
                         Console.WriteLine("-----------------消息异或校验错误，开启下次接收--------------");
                         continue;
                     }
-                    byte[] msg = { 1, 2, 3, 4, 5, 6, 7, 8, 9,10};
+                    byte[] msg = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
                     switch (result[5])
                     {
                         case 0x10:
@@ -74,7 +107,7 @@ namespace JUNOROV
                             switch (result[6])
                             {
                                 case 0x11://前
-                                    //result[7]是跨步步长单位s
+                                            //result[7]是跨步步长单位s
                                     Console.WriteLine($"向前{result[7]}s");
                                     msg = AppendBack(ROV_ROV_hMove);
                                     break;
@@ -93,13 +126,13 @@ namespace JUNOROV
                             }
                             break;
                         case 0x21: //向上
-                            //result[6]高位 result[7]低位
+                                    //result[6]高位 result[7]低位
                             ushort combinedup = (ushort)(result[6] << 8 | result[7]);
                             Console.WriteLine($"向上{combinedup}脉冲");
                             msg = AppendBack(ROV_ROV_vMove);
                             break;
                         case 0x22: //向下
-                            //result[6]高位 result[7]低位
+                                    //result[6]高位 result[7]低位
                             ushort combineddown = (ushort)(result[6] << 8 | result[7]);
                             Console.WriteLine($"向下{combineddown}脉冲");
                             msg = AppendBack(ROV_ROV_vMove);
@@ -179,7 +212,7 @@ namespace JUNOROV
                             switch (result[6])
                             {
                                 case 0x00://
-                                    //result[7]是修改的系数
+                                            //result[7]是修改的系数
                                     Console.WriteLine($"设置速度系数{result[7]}");
                                     msg = AppendBack(ROV_Para_ok);
                                     break;
@@ -206,19 +239,10 @@ namespace JUNOROV
                             Console.WriteLine($"设置目标深度{originalNumber}");
                             break;
                     }
-                    
                     stream.Write(msg, 0, msg.Length);
 
+                };
 
-
-                    //给定80%的概率生成随机数作为压力什么的回传值
-                    double randomValue = random.NextDouble();
-                    if(randomValue < 0.8)
-                    {
-
-                    }
-                }
-                client.Close();
             }
             catch (Exception e)
             {
@@ -233,11 +257,12 @@ namespace JUNOROV
 
         }
 
-
-
-
-
-
+        public static void getBytes(int num, ref byte h, ref byte m, ref byte l)
+        {
+            byte highByte = (byte)(num >> 16); // 获取最高字节
+            byte middleByte = (byte)(num >> 8 & 0xFF); // 获取中间字节
+            byte lowByte = (byte)(num & 0xFF); // 获取最低字节
+        }
 
         public static string ByteToHexStr(byte[] bytes)
         {
@@ -270,26 +295,44 @@ namespace JUNOROV
             return CheckCode;
         }
 
-        public static byte[] ROV_Init_ok                 = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x10, 0x33, 0x00, 0x00 };//初始化完成指令
-        public static byte[] ROV_SelfStabilizing_ok      = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x10, 0x66, 0x00, 0x00 };//深度自稳定打开
-        public static byte[] ROV_SelfStabilizing_no      = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x10, 0x77, 0x00, 0x00 };//深度自稳定关闭
-        public static byte[] ROV_Para_ok                 = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x40, 0x11, 0x00, 0x00 };//参数设置成功
-        public static byte[] ROV_ROV_vMove               = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x20, 0x11, 0x00, 0x00 };//垂直电机执行完毕
-        public static byte[] ROV_ROV_hMove               = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x20, 0x22, 0x00, 0x00 };//水平电机执行完毕
-        public static byte[] ROV_ROV_Transducer1_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x01, 0x11, 0x00 };//打开换能器1完毕
-        public static byte[] ROV_ROV_Transducer2_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x02, 0x11, 0x00 };//打开换能器2完毕
-        public static byte[] ROV_ROV_Transducer3_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x03, 0x11, 0x00 };//打开换能器3完毕
-        public static byte[] ROV_ROV_Transducer4_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x04, 0x11, 0x00 };//打开换能器4完毕
-        public static byte[] ROV_ROV_Transducer5_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x05, 0x11, 0x00 };//打开换能器5完毕
-        public static byte[] ROV_ROV_Camerar_open        = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x06, 0x11, 0x00 };//打开摄像机完毕
-        public static byte[] ROV_ROV_Electromagnet_open  = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x07, 0x11, 0x00 };//打开电磁铁完毕
-        public static byte[] ROV_ROV_Transducer1_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x01, 0x00, 0x00 };//关闭换能器1完毕
-        public static byte[] ROV_ROV_Transducer2_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x02, 0x00, 0x00 };//关闭换能器2完毕
-        public static byte[] ROV_ROV_Transducer3_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x03, 0x00, 0x00 };//关闭换能器3完毕
-        public static byte[] ROV_ROV_Transducer4_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x04, 0x00, 0x00 };//关闭换能器4完毕
-        public static byte[] ROV_ROV_Transducer5_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x05, 0x00, 0x00 };//关闭换能器5完毕
-        public static byte[] ROV_ROV_Camerar_close       = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x06, 0x00, 0x00 };//关闭摄像机完毕
-        public static byte[] ROV_ROV_Electromagnet_close = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x50, 0x30, 0x07, 0x00, 0x00 };//关闭电磁铁完毕
- 
-     }
+        public static byte[] ROV_Init_ok                 = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x33, 0x00, 0x00 };//初始化完成指令
+        public static byte[] ROV_SelfStabilizing_ok      = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x66, 0x00, 0x00 };//深度自稳定打开
+        public static byte[] ROV_SelfStabilizing_no      = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x10, 0x77, 0x00, 0x00 };//深度自稳定关闭
+        public static byte[] ROV_Para_ok                 = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x40, 0x11, 0x00, 0x00 };//参数设置成功
+        public static byte[] ROV_ROV_vMove               = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x20, 0x11, 0x00, 0x00 };//垂直电机执行完毕
+        public static byte[] ROV_ROV_hMove               = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x20, 0x22, 0x00, 0x00 };//水平电机执行完毕
+        public static byte[] ROV_ROV_Transducer1_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x01, 0x11, 0x00 };//打开换能器1完毕
+        public static byte[] ROV_ROV_Transducer2_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x02, 0x11, 0x00 };//打开换能器2完毕
+        public static byte[] ROV_ROV_Transducer3_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x03, 0x11, 0x00 };//打开换能器3完毕
+        public static byte[] ROV_ROV_Transducer4_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x04, 0x11, 0x00 };//打开换能器4完毕
+        public static byte[] ROV_ROV_Transducer5_open    = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x05, 0x11, 0x00 };//打开换能器5完毕
+        public static byte[] ROV_ROV_Camerar_open        = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x06, 0x11, 0x00 };//打开摄像机完毕
+        public static byte[] ROV_ROV_Electromagnet_open  = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x07, 0x11, 0x00 };//打开电磁铁完毕
+        public static byte[] ROV_ROV_Transducer1_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x01, 0x00, 0x00 };//关闭换能器1完毕
+        public static byte[] ROV_ROV_Transducer2_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x02, 0x00, 0x00 };//关闭换能器2完毕
+        public static byte[] ROV_ROV_Transducer3_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x03, 0x00, 0x00 };//关闭换能器3完毕
+        public static byte[] ROV_ROV_Transducer4_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x04, 0x00, 0x00 };//关闭换能器4完毕
+        public static byte[] ROV_ROV_Transducer5_close   = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x05, 0x00, 0x00 };//关闭换能器5完毕
+        public static byte[] ROV_ROV_Camerar_close       = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x06, 0x00, 0x00 };//关闭摄像机完毕
+        public static byte[] ROV_ROV_Electromagnet_close = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x30, 0x07, 0x00, 0x00 };//关闭电磁铁完毕
+
+        //压力值
+        public static byte Press1;
+        public static byte Press2;
+        public static byte Press3;
+        public static byte[] ROV_Press = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x50, Press1, Press2, Press3 };//压力
+
+        public static byte nh1;
+        public static byte nh2;
+        public static byte nh3;
+        public static byte[] ROV_nh = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x60, nh1, nh2, nh3 };//当前活塞位置
+
+        public static byte mh1;
+        public static byte mh2;
+        public static byte mh3;
+        public static byte[] ROV_mh = new byte[9] { 0x00, 0x00, 0x00, 0x06, 0x5A, 0x61, mh1, mh2, mh3 };//当前活塞位置
+
+
+
+    }
 }

@@ -8,19 +8,24 @@
     "net5.0": []
   },
   "packageFolders": {
-    "C:\\Users\\xjh\\.nuget\\packages\\": {}
+    "C:\\Users\\XJH\\.nuget\\packages\\": {},
+    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\xjh\\Documents\\GitHub\\JUNOROVTEST\\JUNOROV\\JUNOROV\\JUNOROV.csproj",
+      "projectUniqueName": "C:\\Users\\XJH\\Documents\\GitHub\\JUNOROVTEST\\JUNOROV\\JUNOROV\\JUNOROV.csproj",
       "projectName": "JUNOROV",
-      "projectPath": "C:\\Users\\xjh\\Documents\\GitHub\\JUNOROVTEST\\JUNOROV\\JUNOROV\\JUNOROV.csproj",
-      "packagesPath": "C:\\Users\\xjh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\xjh\\Documents\\GitHub\\JUNOROVTEST\\JUNOROV\\JUNOROV\\obj\\",
+      "projectPath": "C:\\Users\\XJH\\Documents\\GitHub\\JUNOROVTEST\\JUNOROV\\JUNOROV\\JUNOROV.csproj",
+      "packagesPath": "C:\\Users\\XJH\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\XJH\\Documents\\GitHub\\JUNOROVTEST\\JUNOROV\\JUNOROV\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\xjh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\XJH\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
