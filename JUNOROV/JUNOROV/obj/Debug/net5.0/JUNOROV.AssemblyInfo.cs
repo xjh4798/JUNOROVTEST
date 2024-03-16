@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JUNOROV")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f8cf092b8e5900afc75ac7bd9fefbfce8eca2df5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2e431cf11d5db2fba6573947ffa59f9cc99c0c1e")]
 [assembly: System.Reflection.AssemblyProductAttribute("JUNOROV")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JUNOROV")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

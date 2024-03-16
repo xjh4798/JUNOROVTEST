@@ -173,7 +173,7 @@ namespace JUNOROV
                         case 0x30:
                             switch (result[7]) //result[7]是打开或关闭
                             {
-                                case 0x00:
+                                case 0x11:
                                     switch (result[6])
                                     {
                                         case 0x01://T1
@@ -206,7 +206,7 @@ namespace JUNOROV
                                             break;
                                     }
                                     break;
-                                case 0x11:
+                                case 0x00:
                                     switch (result[6])
                                     {
                                         case 0x01://T1
