@@ -33,6 +33,7 @@ namespace JUNOROV
                 {
                     byte[] msg;
                     int randomValue;
+                    int randomValue2;
                     while (true)
                     {
                         //压力
@@ -41,18 +42,23 @@ namespace JUNOROV
                         
                         stream.Write(msg, 0, msg.Length);
 
-                        //当前活塞
-                        randomValue = random.Next();
-                        msg = getBytes(randomValue, ROV_nh);
-                        stream.Write(msg, 0, msg.Length);
-
 
                         //最大活塞
-                        randomValue = random.Next();
+                        randomValue = random.Next(900,1000);
                         msg = getBytes(randomValue, ROV_mh);
                         stream.Write(msg, 0, msg.Length);
 
-                        Thread.Sleep(1000);
+                        //当前活塞
+
+                        randomValue2 = random.Next();
+                        while (randomValue2 >= randomValue)
+                        {
+                            randomValue2 = random.Next();
+                        }
+                        msg = getBytes(randomValue2, ROV_nh);
+                        stream.Write(msg, 0, msg.Length);
+
+                        Thread.Sleep(200);
                     };
                 });
 
